@@ -92,14 +92,12 @@ def est_fwhm(x, df, stat):
     if stat=='F':
         Dscale = (df1/df2)**2 * Dscale
 
-    print(Dscale)
-
 
     #-Smoothness estimation
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     #-NaN masking the image
-    x      = x*x/x;
+    x[x==0] = np.nan
 
     #-allocating spaced for Lambda calculation
     dx     = np.zeros([xdim,ydim,zdim])   #-initializing deriv in x direction
@@ -109,12 +107,44 @@ def est_fwhm(x, df, stat):
     #-Deriv in x direction
     dx[:(xdim-1),:,:] = np.diff(x,axis=0)  #-Deriv in x direction
     dx[xdim-1,:,:] = dx[xdim-2,:,:]       #-Imputing the edge
-
-##### Start from here #####
-    meandx       = sum(dx[np.isfinite(dx(:))])/length(find(dx(:)));
+    meandx       = np.sum(dx[np.isfinite(dx)])/len(dx[np.isfinite(dx)])
     QzeroX = np.where(np.isnan(dx))
     dx[QzeroX] = 0    #-zeroing NaNs
-    meandx       = sum(dx(find(dx(:))))/length(find(dx(:)));
+
+    #-Deriv in y direction
+    dy[:,:(ydim-1),:] = np.diff(x,axis=1)  #-Deriv in y direction
+    dy[:,ydim-1,:] = dy[:,ydim-2,:]       #-Imputing the edge
+    meandy       = np.sum(dy[np.isfinite(dy)])/len(dy[np.isfinite(dy)])
+    QzeroY = np.where(np.isnan(dy))
+    dy[QzeroY] = 0    #-zeroing NaNs
+
+    #-Deriv in z direction
+    dz[:,:,:(zdim-1)] = np.diff(x,axis=2)  #-Deriv in z direction
+    dz[:,:,zdim-1] = dy[:,:,zdim-2]       #-Imputing the edge
+    meandz       = np.sum(dz[np.isfinite(dz)])/len(dz[np.isfinite(dz)])
+    QzeroZ = np.where(np.isnan(dz))
+    dz[QzeroZ] = 0    #-zeroing NaNs
+
+    #-elements of var(derivative) matrix
+    Dxx = np.sum((dx[np.nonzero(dx)]-meandx)**2)/len(dx[np.nonzero(dx)])
+    Dyy = np.sum((dy[np.nonzero(dy)]-meandy)**2)/len(dy[np.nonzero(dy)])
+    Dzz = np.sum((dz[np.nonzero(dz)]-meandz)**2)/len(dz[np.nonzero(dz)])
+    Qxy = np.nonzero(dx*dy)
+    Qxz = np.nonzero(dx*dz)
+    Qyz = np.nonzero(dy*dz)
+    Dxy = sum((dx[Qxy]-meandx)*(dy[Qxy]-meandy))/len(Qxy[0]) 
+    Dxz = sum((dx[Qxz]-meandx)*(dz[Qxz]-meandz))/len(Qxz[0]) 
+    Dyz = sum((dy[Qyz]-meandy)*(dz[Qyz]-meandz))/len(Qyz[0]) 
+
+    D = np.array([[Dxx,Dxy,Dxz],[Dxy,Dyy,Dyz],[Dxz,Dyz,Dzz]])
+
+    #-finally Lambda matrix
+    Lambda = Dscale * D
+
+    #-calculating global FWHM
+    fwhm = (4*np.log(2))**(3/2)/np.diagonal(Lambda)**(1/6)
+ 
+    return fwhm
 
 
 
