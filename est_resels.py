@@ -64,4 +64,5 @@ def est_resels(fwhm_info, mask_file):
         os.unlink(base + '_tet.nii.gz')
     
 
+mask_img.header['dim']
 
