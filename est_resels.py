@@ -2,6 +2,7 @@ import numpy as np
 import nibabel as nib
 import sys
 import os
+from scipy.stats.mstats import gmean
 
 
 def est_resels(fwhm_info, mask_file):
@@ -35,7 +36,8 @@ def est_resels(fwhm_info, mask_file):
     # Initialization
     #----------------------------------------------------------------------------
     mask_thresh = 0
-
+    fwhm_info = np.array(fwhm_info)
+    
     
     # Rading in the mask image and preparing for resel calculation
     #----------------------------------------------------------------------------
@@ -64,5 +66,10 @@ def est_resels(fwhm_info, mask_file):
         os.unlink(base + '_tet.nii.gz')
     
 
-mask_img.header['dim']
+    # converting fwhm in mm, and calculating the geometric mean
+    dim = mask_img.header['dim'][1:4]
+    pixdim = mask_img.header['pixdim'][1:4]
+    fwhm = gmean(abs(pixdim) * fwhm_info)
+
+    
 
