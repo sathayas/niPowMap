@@ -71,5 +71,21 @@ def est_resels(fwhm_info, mask_file):
     pixdim = mask_img.header['pixdim'][1:4]
     fwhm = gmean(abs(pixdim) * fwhm_info)
 
-    
+    # creating coordinate images
+    mask_data = mask_img.get_data()
+    x_ind = range(mask_data.shape[0])
+    y_ind = range(mask_data.shape[1])
+    z_ind = range(mask_data.shape[2])
+    slice_ind = np.meshgrid(x_ind,y_ind)
+    vol_ind = np.indices(mask_data.shape)
+              #  vol_ind[0]: x-coordinates
+              #  vol_ind[1]: y-coordinates
+              #  vol_ind[2]: z-coordinates
+
+    # sanity check for the voxel coordinates, manually generated          
+    #vol_ind = np.zeros(mask_data.shape + (3,));
+    #for iz in z_ind:
+    #    vol_ind[:,:,iz,0] = slice_ind[0].T
+    #    vol_ind[:,:,iz,1] = slice_ind[1].T
+    #    vol_ind[:,:,iz,2] = iz
 
