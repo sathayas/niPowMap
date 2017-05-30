@@ -12,3 +12,5 @@ stat = 'T'
 tstat_img = nib.load(ftstat)
 tstat_data = tstat_img.get_data()
 fwhm_info = est_fwhm(tstat_data, df, stat)
+
+input_file = 'mask_coord.nii.gz'
