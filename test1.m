@@ -8,5 +8,7 @@ stat = 'T';
 
 fwhm_info = pm_est_fwhm(X, df, stat);
 
+input_file = 'mask_coord.nii.gz'
+
 
 
