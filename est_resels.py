@@ -89,3 +89,21 @@ def est_resels(fwhm_info, mask_file):
     #    vol_ind[:,:,iz,1] = slice_ind[1].T
     #    vol_ind[:,:,iz,2] = iz
 
+    # converting coordinate images to 1D vectors
+    vol_ind_1D = np.vstack([vol_ind[0].flatten(),
+                            vol_ind[1].flatten(),
+                            vol_ind[2].flatten(),
+                            np.ones((1,len(vol_ind[0].flatten())))])
+
+    # voxel coordinates in mm
+    vol_mm_1D = np.dot(mask_img.get_sform(), vol_ind_1D)
+    vol_mm = np.zeros(mask_data.shape + (3,))
+    for iDim in range(3):
+        vol_mm[:,:,:,iDim] = vol_mm_1D[iDim].reshape(mask_data.shape)
+
+    # writing out to a 4D image
+    fcoord_img = base + '.nii.gz'
+    coord_img = nib.Nifti1Image(vol_mm, mask_img.affine)
+    nib.save(coord_img, fcoord_img)
+    
+
