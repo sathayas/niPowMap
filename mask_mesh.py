@@ -19,7 +19,6 @@ def mask_mesh(input_file, output_file_base, mask_file):
           None
 
 
-
     Originally written for fmristat package by Keith Worsley.
     
     This is a modified version using read/write functions from nibabel.
@@ -39,7 +38,7 @@ def mask_mesh(input_file, output_file_base, mask_file):
     n = dim[4]
     numslices = dim[3]
     J = dim[2]
-    I = dim[1];
+    I = dim[1]
 
     # removing the extension from the coordinate file name
     coord_file_path = os.path.abspath(input_file)
@@ -91,5 +90,23 @@ def mask_mesh(input_file, output_file_base, mask_file):
     exz1 = np.hstack([exze, exzo+1])
     exz2 = np.hstack([exze+1+IJ, exzo+IJ])
 
+    eyze = np.nonzero(((i+j)%2==0) & (j<J-1))[-1].reshape(1,-1)
+    eyzo = np.nonzero(((i+j)%2==0) & (j<J-1))[-1].reshape(1,-1)
+    eyz = np.hstack([eyze, eyzo])
+    eyz1 = np.hstack([eyze, eyzo + I])
+    eyze2 = np.hstack([eyze+I+IJ, eyzo+IJ])
 
+    edges_start1 = np.hstack([(ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T, (ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T])
+    edges_start2 = np.hstack([(ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T, (ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T])
 
+    edge1 = np.hstack([(ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T, ez1, exz1, eyz1, (ex1[:,1]).T, (ey1[:,1]).T, (exy1[:,1]).T])
+    edge2 = np.hstack([(ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T, ez2, exz2, eyz2, (ex2[:,1]).T, (ey2[:,1]).T, (exy2[:,1]).T])
+
+    edges1 = np.hstack([edge1, edge2])
+    edges2 = np.hstack([edge2, edge1])
+
+    #START:
+    u = np.zeros(2*IJ,n)
+    v = np.zeros(2*IJ,n)
+    mask = np.zeros(2*IJ, 1)
+    nask = np.zeros(2*IJ, 1)
