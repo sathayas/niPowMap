@@ -34,11 +34,13 @@ def mask_mesh(input_file, output_file_base, mask_file):
     #-loading in the xyz coordinate info stored in a 4D file
     #-------------------------------------------------------------------------------
     coord_img = nib.load(input_file)
+    img_data = coord_img.get_data()
     dim = coord_img.header['dim']
     n = dim[4]
     numslices = dim[3]
     J = dim[2]
     I = dim[1]
+
 
     # removing the extension from the coordinate file name
     coord_file_path = os.path.abspath(input_file)
@@ -69,24 +71,27 @@ def mask_mesh(input_file, output_file_base, mask_file):
 
     ey = np.nonzero(j<J-1)[-1].reshape(1,-1)
     ey1 = np.vstack((ey, ey+IJ)).T
-    ey = np.nonzero(J>0)[-1].reshape(1,-1)
+    ey = np.nonzero(j>0)[-1].reshape(1,-1)
     ey2 = np.vstack((ey, ey+IJ)).T
 
-    ez = np.arange(IJ)
+    ez = np.arange(IJ).reshape(1,-1) #added reshape
     ez1 = ez
-    ez2 = ez+IJ;
+    ez2 = ez+IJ
 
     exye = np.nonzero(((i+j)%2==0) & (i<I-1) & (j<J-1))[-1].reshape(1,-1)
     exyo = np.nonzero(((i+j)%2==1) & (i<I-1) & (j<J-1))[-1].reshape(1,-1)
     exy = np.hstack([exye, exyo])
+ 
     exy1 = np.vstack([np.hstack([exye, exyo+1]),
                       np.hstack([exye+1+IJ, exyo+IJ])]).T
     exy2 = np.vstack([np.hstack([exye+1+I, exyo+I]),
                       np.hstack([exye+I+IJ, exyo+1+I+IJ])]).T
 
+
     exze = np.nonzero(((i+j)%2==0) & (i<I-1))[-1].reshape(1,-1)
     exzo = np.nonzero(((i+j)%2==1) & (i<I-1))[-1].reshape(1,-1)
     exz = np.hstack([exze, exzo])
+
     exz1 = np.hstack([exze, exzo+1])
     exz2 = np.hstack([exze+1+IJ, exzo+IJ])
 
@@ -94,19 +99,31 @@ def mask_mesh(input_file, output_file_base, mask_file):
     eyzo = np.nonzero(((i+j)%2==0) & (j<J-1))[-1].reshape(1,-1)
     eyz = np.hstack([eyze, eyzo])
     eyz1 = np.hstack([eyze, eyzo + I])
-    eyze2 = np.hstack([eyze+I+IJ, eyzo+IJ])
+    eyz2 = np.hstack([eyze+I+IJ, eyzo+IJ])
 
-    edges_start1 = np.hstack([(ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T, (ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T])
-    edges_start2 = np.hstack([(ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T, (ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T])
+    edges_start1 = np.hstack([(ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T, (ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T]).reshape(1,-1)
+    edges_start2 = np.hstack([(ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T, (ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T]).reshape(1, -1)
 
-    edge1 = np.hstack([(ex1[:,0]).T, (ey1[:,0]).T, (exy1[:,0]).T, ez1, exz1, eyz1, (ex1[:,1]).T, (ey1[:,1]).T, (exy1[:,1]).T])
-    edge2 = np.hstack([(ex2[:,0]).T, (ey2[:,0]).T, (exy2[:,0]).T, ez2, exz2, eyz2, (ex2[:,1]).T, (ey2[:,1]).T, (exy2[:,1]).T])
+    edge1 = np.hstack([(ex1[:,0]).T.reshape(1, -1), (ey1[:,0]).T.reshape(1, -1), (exy1[:,0]).T.reshape(1, -1), ez1, exz1, eyz1, (ex1[:,1]).T.reshape(1,-1), (ey1[:,1]).T.reshape(1,-1), (exy1[:,1]).T.reshape(1, -1)]) #added reshape
+    edge2 = np.hstack([(ex2[:,0]).T.reshape(1,-1), (ey2[:,0]).T.reshape(1, -1), (exy2[:,0]).T.reshape(1,-1), ez2, exz2, eyz2, (ex2[:,1]).T.reshape(1, -1), (ey2[:,1]).T.reshape(1,-1), (exy2[:,1]).T.reshape(1, -1)]) #added reshape
+
 
     edges1 = np.hstack([edge1, edge2])
     edges2 = np.hstack([edge2, edge1])
 
     #START:
-    u = np.zeros(2*IJ,n)
-    v = np.zeros(2*IJ,n)
-    mask = np.zeros(2*IJ, 1)
-    nask = np.zeros(2*IJ, 1)
+
+    u = np.zeros((2*IJ,n))
+    v = np.zeros((2*IJ,n))
+    mask = np.zeros((2*IJ, 1))
+    nask = np.zeros((2*IJ, 1))
+    flip = 1
+    print('Calculating mask and mesh')
+
+    # for slice in numslices:
+    #     print('.')
+    #     flip = 3-flip
+    #   tmping = coord_img.
+
+
+mask_mesh('mask_coord.nii.gz', 'mask', 'mask.nii.gz')
