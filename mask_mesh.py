@@ -56,6 +56,14 @@ def mask_mesh(input_file, output_file_base, mask_file):
     #-loading in the mask file
     #-------------------------------------------------------------------------------
     m = nib.load(mask_file)
+    m_data = m.get_data()
+    dd = coord_img
+    dd_data = dd.get_data()
+
+    dim2 = dd.header['dim']
+    dim2[0:4] = np.hstack([I, J, numslices, n])
+    dd_img = np.zeros(dim2[0:4])
+
     
 
     # Set up:
@@ -120,10 +128,67 @@ def mask_mesh(input_file, output_file_base, mask_file):
     flip = 1
     print('Calculating mask and mesh')
 
-    # for slice in numslices:
-    #     print('.')
-    #     flip = 3-flip
-    #   tmping = coord_img.
+    # for slice in range (int(numslices)):
+    for slice in range(2):
+        print('.', end = '')
+        flip = 3-flip
+        tmpimg = np.array(img_data[:,:,slice,:n])
+
+        alteration = (flip -1)*IJ
+        u[np.arange(IJ)+ alteration, :] = tmpimg.reshape( IJ, n)
+        v[np.arange(IJ)+ alteration, :] = tmpimg.reshape( IJ, n)
+
+        mask[np.arange(IJ)+ alteration, :] = m_data[:, :, slice].reshape(IJ, 1)
+        nask[np.arange(IJ)+ alteration, :] = (m_data[:, :, slice]>mask_thresh & np.isfinite(m_data[:, :, slice])).reshape(IJ, 1)
+
+        if slice == 0:
+            temp1 = np.logical_not(nask[edges_start1])
+            # print(temp1)
+            # print(~ temp1)
+            # print((temp1.reshape(-1, 1)).shape)
+            # print(nask.shape)
+            # print(mask[edges_start2]>mask_thresh & np.isfinite(mask[edges_start2]))
+            # print((~nask[edges_start1]).shape)
+
+            #print(((mask[edges_start2]>mask_thresh).reshape(-1, 1)).shape) #right shape for this
+            # print(((np.isfinite(mask[edges_start2])).reshape(-1,1)).shape) #this is also right
+            #print((((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))).shape) #also good
+
+            # print(((temp1.reshape(-1, 1)) & ((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))).shape)
+            surf = (temp1.reshape(-1, 1)) & ((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))
+            surf = np.array(np.where(surf))
+            # print(surf.size)
+
+            m0 = edges_start1[surf]
+            m1 = edges_start2[surf]
+        else:
+            temp1 = np.logical_not(nask[edges_start1])
+            surf = (temp1.reshape(-1, 1)) & ((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))
+            surf = np.array(np.where(surf))
+
+            m0 = edges1[surf]
+            m1 = edges2[surf]
+
+        if surf.size != 0:
+            dm = mask[m1] - mask[m0]
+            mt = mask_thresh * np.ones(len(surf), 1)
+            w = (mt -mask[m0])/(dm+(dm <=0)) * (dm>0)
+            u0 = u[m0, :]
+            u1 = u[m1, :]
+
+            for i in range(n):
+                v[m0, i] = (u0[:, i] * (1-w) + u1[:, i] * w)
+
+            nask[m0] = 1
+
+        if slice > 0:
+            alteration2 = (2-flip)*IJ
+            print(dd_img.shape)
+            print((dd_img[:, :, slice-1, :]).shape)
+            print(img_data[:, :, slice-1, :].shape)
+            # dd_data[:, :, slice-1, :] = (v[np.arange(IJ) + alteration2]).reshape(I, J, 1, n)
+
+
 
 
 mask_mesh('mask_coord.nii.gz', 'mask', 'mask.nii.gz')
