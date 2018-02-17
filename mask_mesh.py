@@ -41,6 +41,10 @@ def mask_mesh(input_file, output_file_base, mask_file):
     J = dim[2]
     I = dim[1]
 
+    m = nib.load(mask_file)
+    m_img = m.get_data()
+    mm_img = m_img.copy()
+
 
     # removing the extension from the coordinate file name
     coord_file_path = os.path.abspath(input_file)
@@ -57,8 +61,7 @@ def mask_mesh(input_file, output_file_base, mask_file):
     #-------------------------------------------------------------------------------
     m = nib.load(mask_file)
     m_data = m.get_data()
-    dd = coord_img
-    dd_data = dd.get_data()
+    dd = nib.load(input_file)
 
     dim2 = dd.header['dim']
     dim2[0:4] = np.hstack([I, J, numslices, n])
@@ -128,8 +131,7 @@ def mask_mesh(input_file, output_file_base, mask_file):
     flip = 1
     print('Calculating mask and mesh')
 
-    # for slice in range (int(numslices)):
-    for slice in range(2):
+    for slice in range (int(numslices)):
         print('.', end = '')
         flip = 3-flip
         tmpimg = np.array(img_data[:,:,slice,:n])
@@ -183,12 +185,25 @@ def mask_mesh(input_file, output_file_base, mask_file):
 
         if slice > 0:
             alteration2 = (2-flip)*IJ
-            print(dd_img.shape)
-            print((dd_img[:, :, slice-1, :]).shape)
-            print(img_data[:, :, slice-1, :].shape)
-            # dd_data[:, :, slice-1, :] = (v[np.arange(IJ) + alteration2]).reshape(I, J, 1, n)
 
+            temp2 = ((dd_img[:, :, slice-1, :]).reshape(I,J,1,n))
+            temp3 = ((v[np.arange(IJ) + alteration2, :]).reshape(I, J, 1, n))
+            temp3 = temp2
 
+            mm_img[:, :, slice -1] = (nask[np.arange(IJ) + alteration2]).reshape(I, J)
+
+        if slice == numslices:
+            alteration3 = (flip-1)*IJ
+            temp4 = ((dd_img[:, :, slice, :]).reshape(I,J,1,n))
+            temp5 = ((v[np.arange(IJ) + alteration3, :]).reshape(I, J, 1, n))
+            temp4 = temp5
+
+            mm_img[:, :, slice] = (nask[np.arange(IJ) + alteration3]).reshape(I, J)
+
+print('Done\n')
+
+nib.save(dd, 'outputmesh.nii')
+nib.save(mm, 'ouputmask.nii')
 
 
 mask_mesh('mask_coord.nii.gz', 'mask', 'mask.nii.gz')
