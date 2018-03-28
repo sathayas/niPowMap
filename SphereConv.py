@@ -1,0 +1,60 @@
+import numpy as np 
+def SphereConv(P, Q, r):
+	#in the actual matlab its eps(7/8) but I can't find comparable func in python
+	tol = np.finfo.eps
+
+	if (isinstance(P, str)):
+		hdr, P = pm_read_vol(P)
+
+	#isstruct not exist in python
+	if (true):
+		VOX = hdrP.dime.pixdim[1:4]
+
+		if VOX[0] < 1:
+			flipdimFlag = 2
+		elif VOX[1] <1:
+			flipdimFlag = 1
+		elif VOX[2] < 1:
+			flipdimFlag = 3
+		else:
+			flipdimFlag = 0
+
+		VOX = abs(VOX)
+
+	else:
+		VOX = [1, 1, 1]
+
+	hdrXin = hdrP
+	Xin = P
+
+	if flipdimFlag > 0:
+		Xin = np.flip(Xin, flipdimFlag-1)
+
+	bXin = np.ones(Xin.shape())
+	tmp = np.argwhere(np.isnan(Xin))
+	tmp2 = np.argwhere(np.isfinite(Xin))
+
+	Xin[tmp] = 0
+	bXin[tmp] = 0
+
+	r2 = np.divide(r, VOX)
+	r2ones = ones(r2.shape())
+	r2 = np.maximum(r2, r2ones)
+
+	rdim = 2*r2+1
+	roff = np.multiply(r2+1, VOX)
+
+	#original: [x y z] = meshgrid(1:rdim(1),1:rdim(2),1:rdim(3));
+	x, y, z = meshgrid(0:rdim[0], 0:rdim[1], 0:rdim[2])
+
+	x = x*VOX[0]
+	y = y*VOX[1]
+	z = z*VOX[2]
+
+	
+
+
+
+
+
+
