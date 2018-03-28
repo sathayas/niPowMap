@@ -51,7 +51,28 @@ def SphereConv(P, Q, r):
 	y = y*VOX[1]
 	z = z*VOX[2]
 
-	
+	xrSphtemp = np.power(x-roff[0], 2)
+	yrSphtemp = np.power(y-roff[1], 2)
+	zrSphtemp = np.power(z-roff[2], 2)
+	Sphtemp = xrSphtemp+yrSphtemp+zrSphtemp
+
+	rSph = np.power(Sphtemp, 1/2)
+
+	brSph = rSph<(r+tol)
+	sumSph = sum(brSph)
+
+	Xout = convn(Xin, brSph, 'same')
+	sumXout = convn(bXin, brSph, 'same')
+
+	XOut[tmp2] = np.divide(XOut[tmp2], sumXout[tmp2])
+	XOut[tmp] = np.nan
+
+	pm_write_vol(hdrXin, Xout, Q)
+
+
+
+
+
 
 
 
