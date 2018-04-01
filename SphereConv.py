@@ -30,7 +30,7 @@ def SphereConv(P, Q, r):
 	if flipdimFlag > 0:
 		Xin = np.flip(Xin, flipdimFlag-1)
 
-	bXin = np.ones(Xin.shape())
+	bXin = np.ones(Xin.shape)
 	tmp = np.argwhere(np.isnan(Xin))
 	tmp2 = np.argwhere(np.isfinite(Xin))
 
@@ -38,14 +38,15 @@ def SphereConv(P, Q, r):
 	bXin[tmp] = 0
 
 	r2 = np.divide(r, VOX)
-	r2ones = ones(r2.shape())
+	r2ones = ones(r2.shape)
 	r2 = np.maximum(r2, r2ones)
 
 	rdim = 2*r2+1
 	roff = np.multiply(r2+1, VOX)
 
-	#original: [x y z] = meshgrid(1:rdim(1),1:rdim(2),1:rdim(3));
-	x, y, z = meshgrid(0:rdim[0], 0:rdim[1], 0:rdim[2])
+	x = meshgrid[0:rdim[0]]
+	y = meshgrid[0:rdim[1]]
+	z = meshgrid[0:rdim[2]]
 
 	x = x*VOX[0]
 	y = y*VOX[1]
