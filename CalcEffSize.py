@@ -3,97 +3,88 @@ import numpy as np
 import os
 import math
 
-#I'm not sure what the first line of the Matlab code does, but this is my best guess
-effSize, fOut = CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut)
+def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 
-#if the fMask is a numpy array
-if (nargin < 2 or fMask.size() == 0):
-	mask = 1
-else:
+	#if the fMask is a numpy array can't really check these since functions aren't translated
+	
+	if (len(locals) < 2 or fMask.size == 0):
+		 mask = 1
+	else:
 
-	#getting second output from the function
-	discard, mask = pm_read_vol(fMask)
+		#getting second output from the function
+		discard, mask = pm_read_vol(fMask)
 
-lFWHM = np.array(FWHM).size()
+	lFWHM = np.array(FWHM).size
 
-if lFWHM >1:
-	FWHM = np.prod(FWHM)**(1/lFWHM)
+	if lFWHM >1:
+		FWHM = np.prod(FWHM)**(1/lFWHM)
 
-#directory, file = fileparts(fStat)
-with open(fStat) as f:
-    for line in f:
-        drive, directory = os.path.splitdrive(line)
-        directory, filename = os.path.split(path)
+	directory, file = os.path.split(fStat)
+	filename_w_ext = os.path.basename(fStat)
+	file, ext = os.path.splitext(filename_w_ext)
 
-file = os.path.splitext(fStat)[0]
+	fOutNaN = os.path.join(directory, str("NaNm_"+file))
 
-#fOutNaN = fullfile(directory,strcat('NaNm_',file)); 
+	#other function in Matlab
+	statHdr, statImg = pm_read_vol(fStat)
 
-fOutNan = os.path.join(directory, str("NaNm_"+file))
+	divided = np.divide(statImg, statImg)
 
-#other function in Matlab
-statHdr, statImg = pm_read_vol(fStat)
+	statNaN = np.mulitply(statImg, divided)
 
-divided = np.divide(statImg, statImg)
+	pm_write_vol is another function
+	pm_write_vol(statHdr, statNaN, fOutNaN)
 
-statNaN = np.mulitply(statImg, divided)
+	directory, file = os.path.split(fOutNaN)
 
-#pm_write_vol is another function
-pm_write_vol(statHdr, statNaN, fOutNaN)
+	fOutSphere = os.path.join(directory, str("s"+file))
 
+	#another previous function
+	SphereConv(fOutNaN, fOutSphere, FWHM)
 
-with open(fOutNan) as f:
-    for line in f:
-        drive, directory = os.path.splitdrive(line)
-        directory, filename = os.path.split(path)
+	statHdr, statImg = pm_read_vol(fOutSphere)
 
-file = os.path.splitext(fStat)[0]
+	if statInfo.type == 'oneT':
+		cohenType = 'd'
+		effSize = np.divide(statImg, math.sqrt(statInfo.N))
 
-fOutSphere = os.path.join(directory, str("s"+file))
+	elif statInfo.type == 'twoT':
+		cohenType = 'd'
+		effSize = statImg * (math.sqrt(statInfo.N1 + statInfo.N2)/ math.sqrt(statInfo.N1 * statInfo.N2))
 
-#another previous function
-SphereConv(fOutNaN, fOutSphere, FWHM)
+	elif statInfo.type == 'reg':
+		cohenType = 'd'
+		effSize = np.divide(statImg, statInfo.N)
 
-statHdr, statImg = pm_read_vol(fOutSphere)
-
-if statInfo.type == 'oneT':
-	cohenType = 'd'
-	effSize = np.divide(statImg, math.sqrt(statInfo.N))
-
-elif statInfo.type == 'twoT':
-	cohenType = 'd'
-	effSize = statImg * (math.sqrt(statInfo.N1 + statInfo.N2)/ math.sqrt(statInfo.N1 * statInfo.N2))
-
-elif statInfo.type == 'reg':
-	cohenType = 'd'
-	effSize = np.divide(statImg, statInfo.N)
-
-elif statInfo.type == 'f':
-	cohenType = 'd'
-	effSize = np.multiply((statInfo.df1/statInfo.df2), statImg)
+	elif statInfo.type == 'F':
+		cohenType = 'f'
+		effSize = np.multiply((statInfo.df1/statInfo.df2), statImg)
 
 
-if (np.array(mask).size() == 1):
-	mask = np.tile(mask, ((effSize).shape(), (effSize).shape()))
+	if (np.array(mask).size == 1):
+		pass
+		mask = np.tile(mask, ((effSize).shape, (effSize).shape))
 
-elif np.array(mask).shape() != np.array(effSize).shape():
-	#pm_reslice is another function
-	mask = pm_reslice(mask, effSize.shape())
+	elif np.array(mask).shape != np.array(effSize).shape:
+		pass
+		pm_reslice is another function
+		mask = pm_reslice(mask, effSize.shape)
 
-effSize = np.multiply(mask, effSize)
+	effSize = np.multiply(mask, effSize)
 
- # fOut is fStat prepended with d_EffSize_ or f_EffSize
- #this shouldn't work since os.listdir should take a path not a directory
-if (nargin < 5 or (os.listdir(dirOut) = [])):
+	 fOut is fStat prepended with d_EffSize_ or f_EffSize
+	 #this shouldn't work since os.listdir should take a path not a directory
+	if (nargin < 5 or (os.listdir(dirOut) == [])):
 
-	with open(fStat) as f:
-    for line in f:
-        drive, dirOut = os.path.splitdrive(line)
-        dirOut, file = os.path.split(path)
+		# with open(fStat) as f:
 
-fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
+	# 		for line in f:
+	# 			drive, dirOut = os.path.splitdrive(line)
+	# 			dirOut, file = os.path.split(path)
 
-#pm_write_vol is another function
-pm_write_vol(statHdr, effSize, fOut)
+	fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
 
+	#pm_write_vol is another function
+	pm_write_vol(statHdr, effSize, fOut)
 
+	return(effSize, fOut)
