@@ -2,6 +2,7 @@ import math
 import numpy as np
 from scipy.linalg import toeplitz
 from scipy.stats import poisson 
+from scipy.stats import norm
 
 def P_ncF(s, df, delta, R):
 	k = 0
@@ -34,6 +35,8 @@ def P_ncF(s, df, delta, R):
 	beta = (np.random.gamma(D/2 +1)/En)**(2/D)
 	p = exp(-beta*(k**(2/D)))
 	P = 1- poisson.cdf(c-1, (Em + eps)*p)
+
+	
 
 
 

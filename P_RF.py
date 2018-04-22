@@ -5,6 +5,7 @@ from scipy.stats import poisson
 from scipy.special import gammaln
 from scipy.stats import t
 from scipy.stats import chi2
+from scipy.stats import f
 
 def P_RF(c, k, z, df, STAT, R, n):
 
@@ -89,10 +90,39 @@ def pm_ECdensity(STAT, t1, df):
 		b = numpy.multiply(numpy.power(t, 1/2*(v-1)), exp(-t1/2 - gammaln(v/2))/2**((v-2)/2))
 
 		EC[0, :] = 1- chi2.cdf(t,v)
-		EC[1, :] = a*(1/2)*b
+		EC[1, :] = a**(1/2)*b
 		EC[2, :] = numpy.multiply(a*b, (t-(v-1)))
 		EC[3, :] = numpy.multiply(a**(3/2)*b, (numpy.power(t, 2)-(2*v-1)*t+(v-1)*(v-2)))
-		
+
+	elif STAT == "F":
+		k = df(1)
+		v = df(2)
+		a = (4*log(2))/(2*math.pi)
+		b = gammaln(v/2) + gammaln(k/2)
+
+		EC[0, :] = 1 - f.cdf(t, df(1), df(2))
+		temp1 = (a**(1/2)*exp((gammaln(v+k-1)/2)-b)*2^(1/2)*(k*t/v))
+		temp2 = numpy.power(temp1, (1/2*(k-1)))
+		temp3 = numpy.multiple(temp2, (1+k*t/v))
+		temp4 = numpy.power(temp3, (-1/2*(v+k-2)))
+		EC[1, :] = temp4
+
+		temp5 = a*exp(gammaln(v+k-2)/2)-b*(k*t/v)
+		temp6 = numpy.power(temp5, (1/2*(k-2)))
+		temp7 = numpy.multiply(temp6, (1+k*t/v))
+		temp8 = numpy.power(temp7, -1/2*(v+k-2))
+		temp9 = numpy.multiply(temp8, ((v-1)*k*t/v-(k-1)))
+		EC[2, :] = temp9
+
+		temp10 = a**(3/2)*exp(gammaln((v+k-3)/2)-b)*2**(-1/2)*(k*t/v)
+		temp11= numpy.power(temp10, (1/2*(k-3)))
+		temp12 = numpy.multiply(temp11, 1+k*t/v)
+		temp13 = numpy.power(temp12, (-1/2*(v+k-2)))
+		temp14 = numpy.multiply(temp13, ((v-1)*(v-2)*(k*t/v)))
+		temp15 = numpy.power(temp14, 2-(2*v*k-v-k-1)*(k*t/v)+(k-1)*(k-2))
+
+		EC[3, :] = temp15
+
 
 
 	return (EC)
