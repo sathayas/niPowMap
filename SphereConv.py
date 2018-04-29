@@ -85,6 +85,8 @@ def SphereConv(P, Q, r):
 	x1 = np.divide(Xout[tmp2], sumXout[tmp2])
 	Xout[tmp2] = np.divide(Xout[tmp2], sumXout[tmp2]) 
 	XOut[tmp] = np.nan
+	
+	Xout = np.reshape(Xout, oringinalshapetuple)
 
 	pm_write_vol(hdrXin, Xout, Q)
 
