@@ -26,6 +26,7 @@ def SphereConv(P, Q, r):
 
 	hdrXin = hdrP
 	Xin = P
+	oringinalshapetuple= Xin.shape
 
 	if flipdimFlag > 0:
 		Xin = np.flip(Xin, flipdimFlag-1)
@@ -74,10 +75,15 @@ def SphereConv(P, Q, r):
 	sumSph = sum(brSph[:])
 	sumSph = (sum(sum(sumSph)))
 
-	Xout = convn(Xin, brSph, 'same')
-	sumXout = convn(bXin, brSph, 'same')
+	Xout = np.convolve(np.ravel(Xin), np.ravel(brSph), 'same')
+	Xout = np.reshape(Xout, oringinalshapetuple)
 
-	XOut[tmp2] = np.divide(XOut[tmp2], sumXout[tmp2])
+	sumXout = np.convolve(np.ravel(bXin), np.ravel(brSph), 'same')
+	sumXout = np.reshape(sumXout, oringinalshapetuple)
+	Xout = np.ravel(Xout)
+
+	x1 = np.divide(Xout[tmp2], sumXout[tmp2])
+	Xout[tmp2] = np.divide(Xout[tmp2], sumXout[tmp2]) 
 	XOut[tmp] = np.nan
 
 	pm_write_vol(hdrXin, Xout, Q)
