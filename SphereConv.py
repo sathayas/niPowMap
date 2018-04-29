@@ -50,28 +50,29 @@ def SphereConv(P, Q, r):
 	rdim = 2*r2+1
 	roff = np.multiply(r2+1, VOX*2)
 
-	x = np.arange(rdim[0]-1)
-	y = np.arange(rdim[0]-1)
-	z = np.arange(rdim[0]-1)
+	x = np.arange(1,rdim[0])
+	y = np.arange(1,rdim[0])
+	z = np.arange(1,rdim[0])
 
 	x, y, z = np.meshgrid(x, y, z)
-
-	x = x*(VOX[0]*2).T
-	y = y*(VOX[1]*2).T
-	z = z*(VOX[2]*2).T
+	
+	x = x*(VOX[0]*2)
+	x = np.transpose(x, (0, 2, 1))
+	y = y*(VOX[1]*2)
+	y = np.transpose(y, (1, 0, 2))
+	z = z*(VOX[2]*2)
+	z = np.transpose(z, (2, 1, 0))
 
 	xrSphtemp = np.power(x-roff[0], 2)
-	print(xrSphtemp[0, 0, :])
 	yrSphtemp = np.power(y-roff[1], 2)
 	zrSphtemp = np.power(z-roff[2], 2)
 	Sphtemp = xrSphtemp+yrSphtemp+zrSphtemp
 
 	rSph = np.power(Sphtemp, 1/2)
-	
-	return
-
 	brSph = rSph<(r+tol)
-	sumSph = sum(brSph)
+
+	sumSph = sum(brSph[:])
+	sumSph = (sum(sum(sumSph)))
 
 	Xout = convn(Xin, brSph, 'same')
 	sumXout = convn(bXin, brSph, 'same')
@@ -80,6 +81,7 @@ def SphereConv(P, Q, r):
 	XOut[tmp] = np.nan
 
 	pm_write_vol(hdrXin, Xout, Q)
+
 
 
 
