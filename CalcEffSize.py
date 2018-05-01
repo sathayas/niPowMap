@@ -1,48 +1,48 @@
-import numpy as np
-# from numpy import prod
-import os
-import math
-
 def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 
-	#if the fMask is a numpy array can't really check these since functions aren't translated
-	
-	if (len(locals) < 2 or fMask.size == 0):
-		 mask = 1
-	else:
+	#if (len(locals()) < 2 or fMask.size == 0):
+		 # mask = 1
+	# else:
 
 		#getting second output from the function
-		discard, mask = pm_read_vol(fMask)
+		# discard, mask = pm_read_vol(fMask)
 
 	lFWHM = np.array(FWHM).size
 
 	if lFWHM >1:
 		FWHM = np.prod(FWHM)**(1/lFWHM)
+	
 
 	directory, file = os.path.split(fStat)
+	
 	filename_w_ext = os.path.basename(fStat)
 	file, ext = os.path.splitext(filename_w_ext)
 
 	fOutNaN = os.path.join(directory, str("NaNm_"+file))
 
-	#other function in Matlab
-	statHdr, statImg = pm_read_vol(fStat)
+	statHdr, statImg = read_vol(fStat)
+	
 
 	divided = np.divide(statImg, statImg)
 
-	statNaN = np.mulitply(statImg, divided)
+	statNaN = np.multiply(statImg, divided)
 
-	pm_write_vol is another function
-	pm_write_vol(statHdr, statNaN, fOutNaN)
 
+	write_vol(statHdr, statNaN, fOutNaN)
+	
 	directory, file = os.path.split(fOutNaN)
+	filename_w_ext = os.path.basename(fOutNaN)
+	file, ext = os.path.splitext(filename_w_ext)
 
 	fOutSphere = os.path.join(directory, str("s"+file))
+	fOutSphere2 = os.path.join(directory, str("s"+filename_w_ext))
 
-	#another previous function
+
 	SphereConv(fOutNaN, fOutSphere, FWHM)
 
-	statHdr, statImg = pm_read_vol(fOutSphere)
+	
+	statHdr, statImg = read_vol(fOutSphere2)
+
 
 	if statInfo.type == 'oneT':
 		cohenType = 'd'
@@ -60,20 +60,18 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 		cohenType = 'f'
 		effSize = np.multiply((statInfo.df1/statInfo.df2), statImg)
 
-
 	if (np.array(mask).size == 1):
-		pass
 		mask = np.tile(mask, ((effSize).shape, (effSize).shape))
 
 	elif np.array(mask).shape != np.array(effSize).shape:
-		pass
-		pm_reslice is another function
-		mask = pm_reslice(mask, effSize.shape)
+		
+		#reslice is another function
+		mask = reslice(mask, effSize.shape)
 
 	effSize = np.multiply(mask, effSize)
 
-	 fOut is fStat prepended with d_EffSize_ or f_EffSize
-	 #this shouldn't work since os.listdir should take a path not a directory
+	# fOut is fStat prepended with d_EffSize_ or f_EffSize
+	#this shouldn't work since os.listdir should take a path not a directory
 	if (nargin < 5 or (os.listdir(dirOut) == [])):
 
 		# with open(fStat) as f:
@@ -82,9 +80,9 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 	# 			drive, dirOut = os.path.splitdrive(line)
 	# 			dirOut, file = os.path.split(path)
 
-	fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
+		fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
 
 	#pm_write_vol is another function
-	pm_write_vol(statHdr, effSize, fOut)
+	write_vol(statHdr, effSize, fOut)
 
 	return(effSize, fOut)
