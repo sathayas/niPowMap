@@ -9,6 +9,10 @@ def write_vol(V, X, fName):
 	directory, file = os.path.split(fName)
 	filename_w_ext = os.path.basename(fName)
 	file, ext = os.path.splitext(filename_w_ext)
+	if filename_w_ext[-4:] == '.nii':
+		nib.save(img1, os.path.join(directory, filename_w_ext))
+	else:
+		filename_w_ext+=".nii"
 	nib.save(img1, os.path.join(directory, filename_w_ext))
 
 	return
