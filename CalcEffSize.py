@@ -1,11 +1,11 @@
 def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
+	nargin = len(locals())
 
-	#if (len(locals()) < 2 or fMask.size == 0):
-		 # mask = 1
-	# else:
-
+	if (nargin < 2 or fMask == ""):
+	 	mask = 1
+	else:
 		#getting second output from the function
-		# discard, mask = pm_read_vol(fMask)
+		discard, mask = read_vol(fMask)
 
 	lFWHM = np.array(FWHM).size
 
@@ -38,7 +38,7 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 	fOutSphere2 = os.path.join(directory, str("s"+filename_w_ext))
 
 
-	SphereConv(fOutNaN, fOutSphere, FWHM)
+	#SphereConv(fOutNaN, fOutSphere, FWHM)
 
 	
 	statHdr, statImg = read_vol(fOutSphere2)
@@ -59,30 +59,34 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 	elif statInfo.type == 'F':
 		cohenType = 'f'
 		effSize = np.multiply((statInfo.df1/statInfo.df2), statImg)
+		
 
 	if (np.array(mask).size == 1):
 		mask = np.tile(mask, ((effSize).shape, (effSize).shape))
 
 	elif np.array(mask).shape != np.array(effSize).shape:
 		
-		#reslice is another function
+		#pm_reslice is another function
 		mask = reslice(mask, effSize.shape)
 
 	effSize = np.multiply(mask, effSize)
+	#effSize[21, 21, 32] is 0 while it is .1360 in Matlab
 
 	# fOut is fStat prepended with d_EffSize_ or f_EffSize
 	#this shouldn't work since os.listdir should take a path not a directory
-	if (nargin < 5 or (os.listdir(dirOut) == [])):
+	cwd = os.getcwd()
+	
+	#no documentation of what dirOut is supposed to be.
+	#if it is a path, replace cwd with dirOut 
+	#If it is a string I have no replacement for it, so this is a work-around
+	if (nargin < 6 or (len(os.listdir(cwd)) == 0)):
+		directory, file = os.path.split(fStat)
+	
+		filename_w_ext = os.path.basename(fStat)
+		file, ext = os.path.splitext(filename_w_ext)
 
-		# with open(fStat) as f:
+	fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
 
-	# 		for line in f:
-	# 			drive, dirOut = os.path.splitdrive(line)
-	# 			dirOut, file = os.path.split(path)
-
-		fOut = os.path.join(directory, str(cohenType+"_EffSize_"+file))
-
-	#pm_write_vol is another function
 	write_vol(statHdr, effSize, fOut)
 
 	return(effSize, fOut)
