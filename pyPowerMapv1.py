@@ -1,41 +1,3 @@
-"""
-pyPowerMap version 0.1
-
-Developer: Yeji "Charlotte" Yun
-Supervisor: Satoru Hayasaka
-Last Revised: 11/14/2018
-
-Purpose:
-
-pyPowermap is  a software tool for calculating statistical power and sample sizes for neuroimaging studies. This is a
-Python implementation of the original PowerMap project written in MATLAB. Our goal is to provide access to the PowerMap
-functionality to non-MatLab users at improved efficiency.
-
-Methods:
-    __init__(self, data): constructor
-        input: data (str)
-              - path to mri file of interest in .nii.gz format
-              example 1: pyPowerMap_Object = pyPowerMap('mymri.nii.gz')
-              example 2: pyPowerMap_Object = pyPowerMap('C:\Users\Documents\mymri.nii.gz')
-
-    resolutions(self, cmp = False, smoothing = 2):
-
-        calculates volume,euler characteristic,linear diameter, and surface area of the brain image
-
-        input: self (pyPowerMap Object)
-               cmp (boolean) - OPTIONAL: if cmp = True, graphs the comparison of raw and gaussian filtered 2d slices of
-                                         the image
-               smoothing(int) - OPTIONAL: gaussian smoothing index
-
-        output: vol (int) - volume
-                euler (int) - euler characteristic
-                lindiam (int) - linear diameter
-                surfacearea (int) - surface area
-
-    void visualize(self): graphs 3d plot of the image
-        input: self (pyPowerMap Object)
-    
-"""
 import nibabel as nib
 import skimage
 from skimage.measure import *
@@ -45,7 +7,43 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 class pyPowerMap:
+    r"""
+    pyPowerMap version 0.1
 
+    Developer: Yeji "Charlotte" Yun
+    Supervisor: Satoru Hayasaka
+    Last Revised: 11/14/2018
+
+    Purpose:
+
+    pyPowermap is  a software tool for calculating statistical power and sample sizes for neuroimaging studies. This is a
+    Python implementation of the original PowerMap project written in MATLAB. Our goal is to provide access to the PowerMap
+    functionality to non-MatLab users at improved efficiency.
+
+    Methods:
+        __init__(self, data): constructor
+            input: data (str)
+                  - path to mri file of interest in .nii.gz format
+                  example 1: pyPowerMap_Object = pyPowerMap('mymri.nii.gz')
+                  example 2: pyPowerMap_Object = pyPowerMap('C:\Users\Documents\mymri.nii.gz')
+
+        resolutions(self, cmp = False, smoothing = 2):
+
+            calculates volume,euler characteristic,linear diameter, and surface area of the brain image
+
+            input: self (pyPowerMap Object)
+                   cmp (boolean) - OPTIONAL: if cmp = True, graphs the comparison of raw and gaussian filtered 2d slices of
+                                             the image
+                   smoothing(int) - OPTIONAL: gaussian smoothing index
+
+            output: vol (int) - volume
+                    euler (int) - euler characteristic
+                    lindiam (int) - linear diameter
+                    surfacearea (int) - surface area
+
+        void visualize(self): graphs 3d plot of the image
+            input: self (pyPowerMap Object)
+    """
     def __init__(self,data):
         # input: data (str)
         #       - path to mri file of interest in .nii.gz format
