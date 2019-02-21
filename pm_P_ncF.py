@@ -46,7 +46,7 @@ def pm_ECncF(s,n1,n2,delta):
     d        = 1+c
 
     tmpEC    = np.zeros(4)
-    tmpEC[0] = 1-round(ncf.cdf(s, n1, n2, delta),10)
+    tmpEC[0] = 1-ncf.cdf(s, n1, n2, delta)
 
     tmpEC[1] = a**(1/2) * b**(-1/2) * 2 * d * c**(1/2) * pm_Exp_ncX(n1+n2, delta, -1/2) * (n2/n1) * ncf.pdf(s,n1,n2,delta)
 
