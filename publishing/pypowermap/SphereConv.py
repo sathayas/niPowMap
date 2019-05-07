@@ -2,6 +2,9 @@ from scipy.ndimage import convolve
 import numpy as np
 from publishing.pypowermap.write_vol import write_vol
 
+# Performs Spherical Convolution upon Array
+# Reference PowerMap/SphereConv.m - https://sourceforge.net/projects/powermap/
+
 def SphereConv(P,Q,r):
     tol = 2.009718347115232*10**-14
     if str(P) == P:

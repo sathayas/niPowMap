@@ -1,7 +1,19 @@
 from scipy.special import gammaln, gamma
 import math
+# 
+# pm_Exp_ncX.py
+# Non-central chi-square moments around 0.
+#
+# FORMAT:  mr = pm_Exp_NCX(df, delta, r)
+# 
+# PARAMETERS:
+#    df:    degrees of freedom (a positive number)
+#    delta: non-centrality parameter (a real number)
+#    r:     the power (a positive number)
+# Reference PowerMap/pm_Exp_ncX.m - https://sourceforge.net/projects/powermap/
 
 def pm_Exp_ncX(df, delta, r):
+    
     eps = 2.2204 * 10 ** -16
     tol = eps ** (7 / 8)
 

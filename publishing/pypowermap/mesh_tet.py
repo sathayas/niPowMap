@@ -1,12 +1,14 @@
 import nibabel as nib
 import numpy as np
 def mesh_tet(input_file, output_file_base):
+
     #MESH_TET finds lengths of edges of a tetrahedral mesh
     #
     # Originally written for fmristat package by Keith Worsley.
     #
     # This is a modified version using read/write functions from nifti toolbox.
     # There are other modifications to make the program shorter and run faster.
+    # Reference PowerMap/mesh_tet.m - https://sourceforge.net/projects/powermap/
     #-----------------------------------------------------------------------------------
     #
     
@@ -96,21 +98,22 @@ def mesh_tet(input_file, output_file_base):
         lams[0,start + ex]    = np.sum((u[ex1[:,flip-1]-1,:]-u[ex2[:, flip-1]-1,:])**2, 1)
         lams[0,start+  IJ+ ey]    = np.sum((u[ ey1[:,flip-1]-1,:]-u[ ey2[:,flip-1]-1,:])**2,1)
         lams[0,start+2*IJ+exy]   = np.sum((u[ exy1[:,flip-1]-1,:]-u[ exy2[:,flip-1]-1,:])**2,1)
-        lam_img[:,:,slice-1:,0:3]  = np.reshape(lams[0,(flip-1)*6*IJ + np.arange(0,(3*IJ))],(I,J,1,3))
+        lam_img[:,:,slice-1,0:3]  = np.reshape(lams[0,(flip-1)*6*IJ + np.arange(0,(3*IJ))],(I,J,3))
         if slice>1:
             lams[0,3*IJ+ ez]      = np.sum((u[ez1-1 ,:]-u[ez2-1 ,:])**2,1)
             lams[0,4*IJ+exz]      = np.sum((u[exz1-1,:]-u[exz2-1,:])**2,1)
             lams[0,5*IJ+eyz]      = np.sum((u[eyz1-1,:]-u[eyz2-1,:])**2,1)
-            lam_img[:,:,slice-1:,3:6] = np.reshape(lams[0,3*IJ+np.arange(0,(3*IJ))],(I,J,1,3))
+            lam_img[:,:,slice-1,3:6] = np.reshape(lams[0,3*IJ+np.arange(0,(3*IJ))],(I,J,3))
 
     print('Done!\n')
     
-    
+    print(lam_img)
     #-writing out the tetrahedral mesh file
     #-----------------------------------------------------------------------------------
     output = nib.Nifti1Image(lam_img, d.affine)
     nib.save(output, output_file_base)
+
     
     return
 
-mesh_tet('mask_coord.nii.gz', 'tet.nii.gz')
+mesh_tet('/testdata/mask_coord.nii.gz', '/testdata/tet.nii.gz')

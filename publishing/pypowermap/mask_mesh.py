@@ -17,6 +17,8 @@ def mask_mesh(input_file, output_file_base, mask_file):
 
     This is a modified version using read/write functions from nibabel.
     There are other modifications to make the program shorter and run faster.
+
+    # Reference PowerMap/mask_mesh.m - https://sourceforge.net/projects/powermap/
     '''
 
     # Initialization
@@ -144,18 +146,6 @@ def mask_mesh(input_file, output_file_base, mask_file):
 
         if slice == 0:
             temp1 = np.logical_not(nask[edges_start1])
-            # print(temp1)
-            # print(~ temp1)
-            # print((temp1.reshape(-1, 1)).shape)
-            # print(nask.shape)
-            # print(mask[edges_start2]>mask_thresh & np.isfinite(mask[edges_start2]))
-            # print((~nask[edges_start1]).shape)
-
-            # print(((mask[edges_start2]>mask_thresh).reshape(-1, 1)).shape) #right shape for this
-            # print(((np.isfinite(mask[edges_start2])).reshape(-1,1)).shape) #this is also right
-            # print((((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))).shape) #also good
-
-            # print(((temp1.reshape(-1, 1)) & ((mask[edges_start2]>mask_thresh).reshape(-1, 1)) & ((np.isfinite(mask[edges_start2])).reshape(-1,1))).shape)
             surf = (temp1.reshape(-1, 1)) & ((mask[edges_start2] > mask_thresh).reshape(-1, 1)) & (
                 (np.isfinite(mask[edges_start2])).reshape(-1, 1))
             surf = np.array(np.where(surf))

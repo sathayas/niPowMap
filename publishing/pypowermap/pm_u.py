@@ -3,6 +3,19 @@ from scipy.stats import chi2
 from scipy.stats import f
 from scipy.stats import norm
 
+# uncorrected critical height threshold at a specified significance level
+# FORMAT [u] = spm_u(a,df,STAT)
+# a     - critical probability - {alpha}
+# df    - [df{interest} df{error}]
+# STAT  - Statistical field
+#               'Z' - Gaussian field
+#               'T' - T - field
+#               'X' - Chi squared field
+#               'F' - F - field
+#
+# u     - critical height {uncorrected}
+# Reference PowerMap/pm_u.m - https://sourceforge.net/projects/powermap/
+
 def pm_u(a,df,STAT):
     if STAT == 'Z':
         return norm.ppf(1-a)

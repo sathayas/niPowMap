@@ -3,6 +3,18 @@ import numpy as np
 from scipy.stats import nct
 from publishing.pypowermap.pm_Exp_ncX import pm_Exp_ncX
 
+#
+# Euler characteristic for non-central T distribution.
+#
+# Usage: [EC] = pm_ECncT(s,df,delta)
+# Parameters:
+#       s:      The value of a non-central t random variable at which EC 
+#               is calculated.
+#       df:     Degrees of freedom
+#       delta:  Non-centrality parameter
+#__________________________________________________________________________
+# Reference: Reference: PowerMap/pm_ECncT.m - https://sourceforge.net/projects/powermap/
+
 def pm_ECncT(s,df,delta):
     a = 4 * math.log(2)
     b = 2 * math.pi

@@ -7,6 +7,22 @@ from publishing.pypowermap.pm_est_fwhm import pm_est_fwhm
 from publishing.pypowermap.pm_P_ncT import pm_P_ncT
 from publishing.pypowermap.uc_RF import uc_RF
 
+# -----------------------------------------------------------------------
+# PowerSurfaceT
+# 
+#   Purpose     Creates a power surface for a t-statistic image.
+#
+#   Inputs      - fStat     T-statistic image
+#               - fMask     Mask image
+#               - FWHM      Full-width at half-max in voxels. If omitted, 
+#                           will be calculated by pm_est_fwhm. 
+#               - FWEal     Threshold (default is 0.05). fwh
+#               - dirOut    Output directory. 
+#
+#   Outputs     A surface image is created, and a mat file is saved to the
+#               statistic image directory.
+# -----------------------------------------------------------------------
+# Reference PowerMap/PowerSurfaceT.m - https://sourceforge.net/projects/powermap/
 
 def PowerSurfaceT(fStat, fMask=[], df=[1, 28], FWHM="default", FWEal=.05, dirOut=[]):
     eps = 2.2204 * 10 ** -16

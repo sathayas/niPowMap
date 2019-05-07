@@ -7,6 +7,8 @@ from scipy.stats import f
 from scipy.stats import norm
 
 def pm_ECdensity(STAT, t, df):
+    # returns ECdensities
+    # Reference: PowerMap/pm_P_RF.m - https://sourceforge.net/projects/powermap/
     EC = [0,0,0,0]
 
     if STAT == 'Z':

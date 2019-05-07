@@ -6,6 +6,22 @@ from scipy.special import gammaln, gamma
 import operator
 from publishing.pypowermap.pm_ECncT import pm_ECncT
 
+#
+# Calculates the corrected p-value for a non-central t-image
+#
+# Usage: [P,Em,En,EN] = pm_P_ncT(s,df,delta,R)
+# Parameters:
+#       s:      The value of a non-central t random variable at which EC 
+#               is calculated.
+#       df:     Degrees of freedom
+#       delta:  Non-centrality parameter
+#       R:      Resel counts for the search volume
+#       P:      Corrected p-value (FWE-corrected)
+#       Em:     Expected number of clusters
+#       En:     Expected number of voxels per cluster
+#       EN:     Expected number of suprathreshold voxels
+#__________________________________________________________________________
+# Reference PowerMap/pm_P_ncT.m - https://sourceforge.net/projects/powermap/
 
 def pm_P_ncT(s, df, delta, R):
     eps = 2.2204 * 10 ** -16

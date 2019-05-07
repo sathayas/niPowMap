@@ -3,8 +3,21 @@ import numpy as np
 from scipy.stats import ncf
 from publishing.pypowermap.pm_Exp_ncX import pm_Exp_ncX
 
+#
+# Euler characteristic for non-central F distribution.
+#
+# Usage: [EC] = pm_ECncF(s,df1,df2,delta)
+# Parameters:
+#       s:      The value of a non-central F random variable at which EC 
+#               is calculated.
+#       df1:    Numerator degrees of freedom
+#       df2:    Denominator degrees of freedom
+#       delta:  Non-centrality parameter (for the numerator)
+#__________________________________________________________________________
+# Reference: PowerMap/pm_ECncF.m - https://sourceforge.net/projects/powermap/
 
 def pm_ECncF(s,n1,n2,delta):
+    
 
     a        = 4*math.log(2)
     b        = 2*math.pi

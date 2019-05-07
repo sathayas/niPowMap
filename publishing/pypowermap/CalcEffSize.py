@@ -1,12 +1,36 @@
 import os
 import numpy as np
 import math
-from .read_vol import read_vol
-from .write_vol import write_vol
-from .SphereConv import SphereConv
+from publishing.pypowermap.read_vol import read_vol
+from publishing.pypowermap.write_vol import write_vol
+from publishing.pypowermap.SphereConv import SphereConv
 from publishing.pypowermap.reslice import reslice
-
+# -----------------------------------------------------------------------
+# CALCEFFSIZE
+#
+# Purpose 
+#           Calculate the effect size for a statistic image
+# Inputs
+#           fStat    - Statistic image file name
+#           fMask    - Mask image file name
+#           statInfo - Structure containing statistic image information.
+#                      Field are described below:
+#                      .type    - Test type ('oneT', 'twoT', 'reg', 'F')
+#                      .N       - Number of subjects (if oneT, reg)
+#                      .N1      - Number of subjects in group 1 (if twoT)
+#                      .N2      - Number of subjects in group 2 (if twoT)
+#                      .df1     - Numerator df of pilot study (if F)
+#                      .df2     - Denominator df of pilot study (if F)
+#           FWHM    - Full width half maximum, as either a scalar or a 1x3
+#                     vector.
+# Outputs   effSize - Matrix containing effect size image
+#           fOut    - Directory where effect size image is saved
+#
+# Reference PowerMap/CalcEffSize.m - https://sourceforge.net/projects/powermap/
+#
+# -----------------------------------------------------------------------
 def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
+    
     nargin = len(locals())
 
     if (nargin < 2 or fMask == ""):
@@ -19,6 +43,8 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 
     if lFWHM > 1:
         FWHM = np.prod(FWHM) ** (1 / lFWHM)
+
+    # Take statistic image, divide by itself, then multiply by itself
 
     directory, file = os.path.split(fStat)
 
@@ -40,11 +66,11 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
 
     fOutSphere = os.path.join(directory, str(file))
     fOutSphere2 = os.path.join(directory, str(filename_w_ext))
-
+    # Convolve statistics image with 3D sphere
     statHdr, statImg = SphereConv(fOutNaN, fOutSphere, FWHM)
 
 
-
+    #Calculate effect size depending on test type
     if statInfo["type"] == 'oneT':
         cohenType = 'd'
         effSize = np.divide(statImg, math.sqrt(statInfo["N"]))
@@ -61,12 +87,13 @@ def CalcEffSize(fStat, fMask, statInfo, FWHM, dirOut):
         cohenType = 'f'
         effSize = np.multiply((statInfo["df1"] / statInfo["df2"]), statImg)
 
+    # mask the effSize image
     if (np.array(mask).size == 1):
         mask = np.tile(mask, ((effSize).shape, (effSize).shape))
 
     elif np.array(mask).shape != np.array(effSize).shape:
 
-        # pm_reslice is another function
+        # mask must be resliced
         mask = reslice(mask, effSize.shape)
 
     effSize = np.multiply(mask, effSize)

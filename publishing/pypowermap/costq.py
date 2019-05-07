@@ -1,7 +1,8 @@
 from scipy.stats import t
 from scipy.stats import nct
 from scipy.stats import f
-
+# costq(u, q, df, nc, psig, STAT) - helper function for uc_FDR.py
+# Reference PowerMap/pm_uc_FDR.m - https://sourceforge.net/projects/powermap/
 def costq(u, q, df, nc, psig, STAT):
 
 	tol     = 0.000000001

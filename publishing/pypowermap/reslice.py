@@ -1,5 +1,17 @@
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator as rgi
+# -----------------------------------------------------------------------
+# PM_RESLICE
+#
+# Purpose   Reslice a matrix to specified dimensions
+#
+# Inputs    mat     - Matrix to be resliced
+#           rdims   - Size of matrix after it is resliced
+#
+# Outputs   rmat    - Resliced matrix
+#
+# -----------------------------------------------------------------------
+# Reference PowerMap/pm_reslice.m - https://sourceforge.net/projects/powermap/
 
 def reslice(mat,rdims):
 

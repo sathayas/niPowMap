@@ -1,6 +1,21 @@
 from publishing.pypowermap.P_RF import P_RF
 from publishing.pypowermap.pm_u import pm_u
 
+# corrected critical height threshold at a specified significance level
+# FORMAT u = uc_RF(a,df,STAT,R,n)
+# a     - critical probability - {alpha}
+# df    - [df{interest} df{residuals}]
+# STAT  - Statistical field
+#		'Z' - Gaussian field
+#		'T' - T - field
+#		'X' - Chi squared field
+#		'F' - F - field
+# R     - RESEL Count {defining search volume}
+# n     - number of conjoint SPMs
+#
+# u     - critical height {corrected}
+# Reference PowerMap/pm_uc_RF.m - https://sourceforge.net/projects/powermap/
+
 def uc_RF(a, df, STAT, R, n):
 
     u = pm_u((a/sum(R))**(1/n), df,STAT)

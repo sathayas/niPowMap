@@ -4,7 +4,22 @@ from scipy.stats.mstats import gmean
 from skimage.filters import gaussian
 import matplotlib.pyplot as plt
 import numpy as np
-from publishing.pypowermap.pm_est_fwhm import pm_est_fwhm
+
+# est_resels_marching_cube(self, cmp = False, smoothing = 2):
+#
+#             calculates volume,euler characteristic,linear diameter, and surface area of the brain image
+#
+#             input: self (publishing Object)
+#                    fwhm_info (1x3 numpy array): full width half max info
+#                    cmp (boolean) - OPTIONAL: if cmp = True, graphs the comparison of raw and gaussian filtered 2d slices of
+#                                              the image
+#                    smoothing(int) - OPTIONAL: gaussian smoothing index
+#
+#             output:
+#                     euler (int) - euler characteristic
+#                     lindiam (int) - linear diameter
+#                     surfacearea (int) - surface area
+#                     vol (int) - volume
 
 def est_resels_marching_cube(file, fwhm_info, cmp=False, smoothing=2):
     nii = nib.load(file)
@@ -43,14 +58,4 @@ def est_resels_marching_cube(file, fwhm_info, cmp=False, smoothing=2):
     surfacearea = skimage.measure.mesh_surface_area(verts, faces)
     fwhm = gmean(fwhm_info * voxelsize)
     lindiam, surfacearea, vol = lindiam / fwhm, surfacearea / (fwhm ** 2), vol / (fwhm ** 3)
-    print("Euler Characteristic = " + str(euler))
-    print("Linear Diameter = " + str(lindiam))
-    print("Surface Area = " + str(surfacearea))
-    print("Volume = " + str(vol))
     return euler, lindiam, surfacearea, vol
-
-nii = nib.load('tstat1.nii.gz')
-x = nii.get_data()
-fwhm = pm_est_fwhm(x, [1,28], 'T')
-[a,b,c,d] = est_resels_marching_cube('mask.nii.gz', fwhm)
-print([a,b,c,d])

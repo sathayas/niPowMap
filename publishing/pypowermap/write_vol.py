@@ -1,5 +1,17 @@
 import nibabel as nib
-
+import numpy as np
+import os
+# -----------------------------------------------------------------------
+# 
+# WRITE_VOL
+#
+# Purpose   Wrapper function to write a 3D or 4D analyze or nifti image
+#           using nibabel
+#
+# Inputs    V       - Image header
+#           X       - Image data
+#           fName   - Output file name, including directory
+# -----------------------------------------------------------------------
 def write_vol(V, X, fName):
 
 	X = np.array(X)

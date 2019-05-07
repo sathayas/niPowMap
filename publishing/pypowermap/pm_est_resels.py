@@ -28,8 +28,10 @@ def est_resels(fwhm_info, mask_file):
           (mainly for resel calculation):
                  mask_mesh.py
                  mesh_tet.py
-                 intrinsicvol.py
+                 intrinsicvol.py (to be completed)
+     Reference PowerMap/pm_est_resels.m - https://sourceforge.net/projects/powermap/
     '''
+
 
     # Initialization
     # ----------------------------------------------------------------------------
@@ -101,9 +103,3 @@ def est_resels(fwhm_info, mask_file):
     fcoord_img = base + '.nii.gz'
     coord_img = nib.Nifti1Image(vol_mm, mask_img.affine)
     nib.save(coord_img, fcoord_img)
-
-nii = nib.load('tstat1.nii.gz')
-x = nii.get_data()
-fwhm = pm_est_fwhm(x, [1,28], 'T')
-print(fwhm)
-est_resels(fwhm, 'tstat1.nii.gz')
