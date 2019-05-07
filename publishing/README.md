@@ -1,3 +1,5 @@
+*pyPowerMap*
+
 This is a Python version of PowerMap, a software tool for calculating statistical power and sample sizes for neuroimaging studies.
 The purpose of this project has been to offer the functionalities of PowerMap in an open source Python software for accessibility to a broader range of users.
 
