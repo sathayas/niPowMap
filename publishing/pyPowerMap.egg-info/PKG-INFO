@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: pyPowerMap
+Version: 0.0.1
+Summary: Python implementation of MatLab PowerMap software for neuroimaging studies; Directed by Dr. Satoru Hayasaka
+Home-page: https://github.com/sathayas/niPowMap
+Author: Yeji Charlotte Yun
+Author-email: author@example.com
+License: UNKNOWN
+Description: PowerMap, a MatLab software tool for neuro-imaging study planning, is one of very few software tools that can facilitate massive multiple comparison of voxels and determine power and sample size from brain MRI data. [3] “PowerMap implements theoretical power calculation algorithms based on non-central random field theory. It can also calculate power for statistical analyses with FDR (false discovery rate) corrections.” [3] However, PowerMap has limited compatibility and accessibility, as it requires the purchase of a MatLab license for usage. The purpose of this project has been to offer the functionalities of PowerMap in an open source Python software for accessibility to a broader range of users.
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
