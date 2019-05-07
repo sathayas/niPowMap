@@ -7,7 +7,7 @@ setuptools.setup(
     name="publishing",
     version="0.0.1",
     author="Yeji Charlotte Yun",
-    author_email="author@example.com",
+    author_email="yeji.yun1225@utexas.edu",
     description="Python implementation of MatLab PowerMap software for neuroimaging studies; Directed by Dr. Satoru Hayasaka",
     long_description=long_description,
     long_description_content_type="text/markdown",
